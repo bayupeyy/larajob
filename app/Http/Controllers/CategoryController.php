@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreCategoryRequest;
 use App\Models\Category;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class CategoryController extends Controller
 {
@@ -22,17 +25,32 @@ class CategoryController extends Controller
      */
     public function create()
     {
-        //
+        //Digunakan untuk membuat kategori baru
+        return view('super_admin.categories.create');
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreCategoryRequest $request)
     {
         //
-    }
+        DB::beginTransaction(function() use ($request) {
+            $validated = $request->validated();
+            // Validasi dan simpan ikon jika ada
+            if ($request->hasFile('icon')) {
+                $iconPath = $request->file('icon')->store('icons' . date('Y/m/d'), 'public');
+                $validated['icon'] = $iconPath;
+            }
+            // Simpan kategori
+            $validated['slug'] = Str::slug($validated['name']);
 
+            $newData = Category::create($validated);
+        });
+
+        // Redirect ke halaman kategori dengan pesan sukses
+        return redirect()->route('categories.index')->with('success', 'Kategori berhasil dibuat.');
+    }
     /**
      * Display the specified resource.
      */
