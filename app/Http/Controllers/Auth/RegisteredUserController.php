@@ -32,20 +32,43 @@ class RegisteredUserController extends Controller
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
+            'account_type' => ['required', 'string', 'max:255'],
+            'occupation' => ['required', 'string', 'max:255'],
+            'experience' => ['required', 'numeric', 'min:0'],
+            'avatar' => ['required', 'image', 'mimes:png,jpg,jpeg'],
+            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
+        // Handle avatar upload
+        if ($request->hasFile('avatar')) {
+            $avatarPath = $request->file('avatar')->store('avatars', 'public');
+        } else {
+            $avatarPath = null; // Handle the case where no avatar is uploaded
+        }
+
         $user = User::create([
             'name' => $request->name,
+            'occupation' => $request->occupation,
+            'experience' => $request->experience,
+            'avatar' => $avatarPath,
             'email' => $request->email,
             'password' => Hash::make($request->password),
         ]);
+
+        // Assign the user role
+        if ($request->account_type === 'employee') {
+            $user->assignRole('employee');
+        } elseif ($request->account_type === 'employer') {
+            $user->assignRole('employer');
+        } else {
+            $user->assignRole('employee'); // Default to employee if no valid account type is provided
+        }
 
         event(new Registered($user));
 
         Auth::login($user);
 
-        return redirect(RouteServiceProvider::HOME);
+        return redirect(route('dashboard', absolute: false));
     }
 }

@@ -1,5 +1,5 @@
 <x-guest-layout>
-    <form method="POST" action="{{ route('register') }}">
+    <form method="POST" action="{{ route('register') }}" enctype="multipart/form-data">
         @csrf
 
         <!-- Name -->
@@ -7,6 +7,38 @@
             <x-input-label for="name" :value="__('Name')" />
             <x-text-input id="name" class="block mt-1 w-full" type="text" name="name" :value="old('name')" required autofocus autocomplete="name" />
             <x-input-error :messages="$errors->get('name')" class="mt-2" />
+        </div>
+
+        <!--  Menambah avatar -->
+        <div class="mt-4">
+            <x-input-label for="avatar" :value="__('Avatar')" />
+            <x-text-input id="avatar" class="block mt-1 w-full" type="file" name="avatar" autofocus autocomplete="avatar" />
+            <x-input-error :messages="$errors->get('avatar')" class="mt-2" />
+        </div>
+
+
+        <!-- Account Type -->
+        <div class="mt-4">
+            <x-input-label for="account_type" :value="__('Account Type')" />
+            <select id="account_type" name="account_type" class="block mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
+                <option value="employee" {{ old('account_type') == 'employee' ? 'selected' : '' }}>{{ __('Employee') }}</option>
+                <option value="employer" {{ old('account_type') == 'employer' ? 'selected' : '' }}>{{ __('Employer') }}</option>
+            </select>
+            <x-input-error :messages="$errors->get('account_type')" class="mt-2" />
+        </div>
+
+        <!-- Menambahkan Occupation -->
+        <div class="mt-4">
+            <x-input-label for="occupation" :value="__('Occupation')" />
+            <x-text-input id="occupation" class="block mt-1 w-full" type="text" name="occupation" :value="old('occupation')" required autocomplete="occupation" />
+            <x-input-error :messages="$errors->get('occupation')" class="mt-2" />
+        </div>
+
+        <!-- Experience -->
+        <div class="mt-4">
+            <x-input-label for="experience" :value="__('Experience (in years)')" />
+            <x-text-input id="experience" class="block mt-1 w-full" type="number" name="experience" :value="old('experience')" required autocomplete="username" />
+            <x-input-error :messages="$errors->get('experience')" class="mt-2" />
         </div>
 
         <!-- Email Address -->

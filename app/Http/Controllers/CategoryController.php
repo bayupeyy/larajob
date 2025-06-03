@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreCategoryRequest;
+use App\Http\Requests\UpdateCategoryRequest;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class CategoryController extends Controller
@@ -35,7 +37,7 @@ class CategoryController extends Controller
     public function store(StoreCategoryRequest $request)
     {
         //
-        DB::beginTransaction(function() use ($request) {
+        DB::transaction(function () use ($request) {
             $validated = $request->validated();
             // Validasi dan simpan ikon jika ada
             if ($request->hasFile('icon')) {
@@ -49,7 +51,7 @@ class CategoryController extends Controller
         });
 
         // Redirect ke halaman kategori dengan pesan sukses
-        return redirect()->route('categories.index')->with('success', 'Kategori berhasil dibuat.');
+        return redirect()->route('admin.categories.index')->with('success', 'Kategori berhasil ditambahkan.');
     }
     /**
      * Display the specified resource.
@@ -64,15 +66,29 @@ class CategoryController extends Controller
      */
     public function edit(Category $category)
     {
-        //
+        //Fitur untuk mengedit kategori
+        return view('super_admin.categories.edit', compact('category'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Category $category)
+    public function update(UpdateCategoryRequest $request, Category $category)
     {
-        //
+        DB::transaction(function () use ($request, $category) {
+            $validated = $request->validated();
+
+            if ($request->hasFile('icon')) {
+                $iconPath = $request->file('icon')->store('icons/' . date('Y/m/d'), 'public');
+                $validated['icon'] = $iconPath;
+            }
+
+            $validated['slug'] = Str::slug($validated['name']);
+
+            $category->update($validated);
+        });
+
+        return redirect()->route('admin.categories.index')->with('success', 'Kategori berhasil diperbarui!');
     }
 
     /**
@@ -81,9 +97,14 @@ class CategoryController extends Controller
     public function destroy(Category $category)
     {
         //
-    }
+        DB::transaction(function () use ($category) {
+            // Hapus ikon jika ada
+            if ($category->icon) {
+                $category->delete();
+            }
+        });
 
-    public function download_file() {
-
+        // Redirect ke halaman kategori dengan pesan sukses
+        return redirect()->route('admin.categories.index')->with('success', 'Kategori berhasil dihapus!');
     }
 }
