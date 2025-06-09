@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreCompanyRequest;
+use App\Http\Requests\UpdateCompanyRequest;
 use App\Models\Category;
 use App\Models\Company;
 use Illuminate\Http\Request;
@@ -88,15 +89,35 @@ class CompanyController extends Controller
      */
     public function edit(Company $company)
     {
-        //
+        //Digunakan untuk mengedit company
+        return view('admin.company.edit', compact('company'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Company $company)
+    public function update(UpdateCompanyRequest $request, Company $company)
     {
-        //
+        //Digunakan untuk mengupdate company
+        // Validasi data
+        DB::transaction(function () use ($request, $company) {
+            $validated = $request->validated();
+
+            // Jika ada file logo diupload
+            if ($request->hasFile('logo')) {
+                // Hapus logo lama jika ada
+                $logoPath =
+                $request->file('logo')->store('logos/' . date('Y/m/d'), 'public');
+                $validated['logo'] = $logoPath;
+            }
+            // Update slug jika nama perusahaan berubah
+            $validated['slug'] = Str::slug($validated['name']);
+            // Update data company
+            $company->update($validated);
+        });
+
+        // Redirect ke halaman index dengan pesan sukses
+        return redirect()->route('admin.company.index')->with('success', 'Company updated successfully!');
     }
 
     /**
@@ -104,6 +125,12 @@ class CompanyController extends Controller
      */
     public function destroy(Company $company)
     {
-        //
+        //Digunakan untuk menghapus company
+        DB::transaction(function () use ($company) {
+            // Hapus data company
+            $company->delete();
+        });
+        // Redirect ke halaman index dengan pesan sukses
+        return redirect()->route('admin.company.index')->with('success', 'Company deleted successfully!');
     }
 }

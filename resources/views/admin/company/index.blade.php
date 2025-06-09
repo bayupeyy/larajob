@@ -14,13 +14,13 @@
 
                 <div class="item-card flex flex-row justify-between items-center">
                     <div class="flex flex-row items-center gap-x-3">
-                        <img src="{{Strorage::url($company->logo)}}" alt="" class="rounded-2xl object-cover w-[90px] h-[90px]">
+                        <img src="{{Storage::url($company->logo)}}" alt="" class="rounded-2xl object-cover w-[90px] h-[90px]">
                         <div class="flex flex-col">
                             <h3 class="text-indigo-950 text-xl font-bold">
                                 {{$company->name}}
                             </h3>
                         <p class="text-slate-500 text-sm">
-                            //Digunakan untuk menampilkan jumlah lowongan pekerjaan yang telah diposting oleh perusahaan
+                            {{-- Digunakan untuk menampilkan jumlah pekerjaan yang telah diposting oleh perusahaan --}}
                             {{$company->jobs->count()}} Jobs posted
                         </p>
                         </div>
