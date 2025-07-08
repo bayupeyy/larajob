@@ -23,7 +23,7 @@ class StoreApplyJobRequest extends FormRequest
     {
         return [
             //
-            'resume' => ['required', 'file', 'mimes:pdf,doc,docx'],
+            'resume' => ['required', 'file', 'mimes:pdf'],
             'message' => ['required', 'string', 'max:65535'],
         ];
     }

@@ -15,4 +15,9 @@ class Category extends Model
         'icon',
         'slug',
     ];
+
+    public function jobs()
+    {
+        return $this->hasMany(CompanyJob::class, 'category_id');
+    }
 }

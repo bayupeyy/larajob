@@ -23,6 +23,7 @@ use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 
 Route::get('/', [FrontController::class, 'index'])->name('frontend.index');
 Route::get('/details/{company_job:slug}', [FrontController::class, 'details'])->name('frontend.details');
+Route::get('/category/{category:slug}', [FrontController::class, 'category'])->name('frontend.category');
 
 Route::get('/dashboard', function () {
     return view('dashboard');
@@ -33,11 +34,19 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
+    Route::middleware('can:apply job')->group(function () {
+        Route::get('/apply/success', [FrontController::class, 'success_apply'])->name('frontend.apply.success');
+
+        Route::get('/apply/{company_job:slug}', [FrontController::class, 'apply'])->name('frontend.apply');
+        Route::post('/apply/{company_job:slug}/submit', [FrontController::class, 'apply_store'])->name('frontend.apply.store');
+
+        });
+
     Route::prefix('dashboard')->name('dashboard.')->group(function () {
 
         Route::middleware('can:apply job')->group(function () {
             Route::get('my-applications', [DashboardController::class, 'my_applications'])->name('my.applications');
-            Route::get('my-applications/{job_candidate}', [DashboardController::class, 'my_application_details'])->name('my.application.details');
+            Route::get('my-applications/{job_candidate}', [DashboardController::class, 'my_applications_details'])->name('my.application.details');
         });
     });
 
