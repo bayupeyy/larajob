@@ -24,14 +24,13 @@
                             </h3>
                         <p class="text-slate-500 text-sm">
                             {{$job->category->name}}
-                            //Digunakan untuk menampilkan kategori pekerjaan yang relevan dengan lowongan ini
                         </p>
                         </div>
                     </div>
                     <div  class="hidden md:flex flex-col">
                         <p class="text-slate-500 text-sm">Salary</p>
                         <h3 class="text-indigo-950 text-xl font-bold">
-                            Rp. {{number_format($job->salary, 0, ',', '.')}} / month
+                            Rp. {{number_format($job->salary, 0, ',', '.')}} /Mo
                         </h3>
                     </div>
                     <div  class="hidden md:flex flex-col">
