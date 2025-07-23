@@ -56,7 +56,7 @@
                 @endforelse
 
 
-
+                {{ $company_jobs->links() }}
 
 
 

@@ -75,4 +75,18 @@ class FrontController extends Controller
     {
         return view('frontend.apply_success');
     }
+
+    public function search(Request $request)
+    {
+        $request->validate([
+            'keyword' => ['required', 'string', 'max:255'],
+        ]);
+
+        $keyword = $request->keyword;
+        $jobs = CompanyJob::with(['company', 'category'])
+            ->where('name', 'like', '%' . $keyword . '%')
+            ->paginate(1);
+
+        return view('frontend.search', compact('jobs', 'keyword'));
+    }
 }

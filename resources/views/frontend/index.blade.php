@@ -67,13 +67,14 @@
                     <p class="text-lg leading-[34px] text-white">Must trusted platform to build new career and<br>get an
                         happy job better than before</p>
                 </div>
-                <form action="search.html"
+                <form method="GET" action="{{ route('frontend.search') }}"
                     class="flex items-center bg-white rounded-full pl-6 h-fit focus-within:ring-2 focus-within:ring-[#FF6B2C] transition-all duration-300">
+                    @csrf
                     <div class="flex items-center w-full mr-6 gap-[10px]">
                         <div class="flex shrink-0">
                             <img src="assets/icons/search-normal.svg" alt="icon">
                         </div>
-                        <input type="text" autocomplete="off"
+                        <input name="keyword" type="text" autocomplete="off"
                             class="appearance-none w-full outline-none font-semibold placeholder:font-normal placeholder:text-[#0E0140] focus:outline-none"
                             placeholder="Quick search your dream job...">
                     </div>
